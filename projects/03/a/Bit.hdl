@@ -14,5 +14,20 @@ CHIP Bit {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    // // 分为读写两种情况
+    // // 利用Mux 实现, 
+    // // 如果Mux 输入 true 则为读, 返回上次输出值 out1 让out1 赋值给in1
+    // // 如果mux 输入 false 则为写, 则将真正输入值 in 赋值给in1
+    // Mux(a=out1, b=in, sel=load, out=out2);
+    // // 无论读/写, 则 in1 存储到out1上面
+    // DFF(in=out2, out=out1);
+    // And(a=out1, b=true, out=out);
+
+    
+    // 根据load条件判断, 如果load true 读取, 返回 out1, 如果load false, 写入, 返回 in
+    Mux(a=out1, b=in, sel=load, out=out2);
+    // DFF:
+    // 写入输出值
+    // 以及进行历史记录
+    DFF(in=out2, out=out1, out=out);
 }
