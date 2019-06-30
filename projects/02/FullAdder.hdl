@@ -14,4 +14,14 @@ CHIP FullAdder {
 
     PARTS:
     // Put you code here:
+    HalfAdder(a=a, b=b, sum=sum1, carry=carry1);
+    // 对于 进位
+    // 0 0 0
+    // 1 0 0
+    // 0 1 0
+    // 1 1 1
+    And(a=c, b=sum1, out=carry2);
+    Or(a=carry1, b=carry2, out=carry);
+    // 对于本位
+    Xor(a=c, b=sum1, out=sum);
 }
