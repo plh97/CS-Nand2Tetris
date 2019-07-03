@@ -289,3 +289,68 @@ M=M-1
 0,JMP
 (END)
 ```
+
+```table
+J JEQ 20  跳躍 (相等) JEQ Cx  if SW(=) PC=PC+Cx
+J JNE 21  跳躍 (不相等) JNE Cx  if SW(!=) PC=PC+Cx
+J JLT 22  跳躍 (<) JLT Cx if SW(<) PC=PC+Cx
+J JGT 23  跳躍 (>) JGT Cx if SW(>) PC=PC+Cx
+J JLE 24  跳躍 (<=) JLE Cx  if SW(<=) PC=PC+Cx
+J JGE 25  跳躍 (>=) JGE Cx  if SW(>=) PC=PC+Cx
+J JMP 26  跳躍 (無條件  JMP Cx  PC=PC+Cx
+```
+
+### Fill.asm 程序
+
+这段汇编程序就有意思了,卡了我一个星期没搞出来,
+
+- @KBD 代表监听键盘事件,等于 0 以及大于零分别对应跳转到 black 和 white 循环中
+- @SCREEN 代表屏幕 I/O 设备在内存中内存映射的起始位置 M=-1 则代表从开始位置,连续 16 个点展示为黑色,M=0 则为白色
+- (black) 循环,判断 i 是否超出 8192 界限,调到 loop 循环或者 i++,屏幕的内存映射 A+i 设为-1 即黑色连续块,最后还是跳到 look 循环
+- (white) 循环,先判断i是否小于0.调到loop循环,或者i--.屏幕的内存映射A+i设为0.即白色连续色块,最后还是跳到loop循环.
+
+```asm
+@i
+M=0
+
+(loop)
+@KBD
+D=M
+@black
+D;JGT   // >
+@white
+D;JEQ   // 相等
+
+(black)
+// i大于0 直接推出到loop
+@i
+D=M
+@8192 // 256*512/16 = 8192
+D=D-A
+@loop
+D;JEQ
+@i
+D=M
+@SCREEN  // 屏幕内容由于RAM地址位16384这个地址(Ox4000)开始的一个8k内存映射开始表示
+A=A+D
+M=-1
+@i
+M=M+1
+@loop
+0;JMP
+
+(white)
+@i
+D=M
+@loop
+D;JLT  // i<0 直接推出到loop
+@i
+D=M
+@SCREEN
+A=A+D
+M=0
+@i
+M=M-1
+@loop
+0;JMP
+```
