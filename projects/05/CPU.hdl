@@ -27,18 +27,38 @@
 
 CHIP CPU {
 
-    IN  inM[16],         // M value input  (M = contents of RAM[A])
-        instruction[16], // Instruction for execution
-        reset;           // Signals whether to re-start the current
+    IN  inM[16],         // M value input  (M = contents of RAM[A])     // 输入值
+        instruction[16], // Instruction for execution                   // 指令
+        reset;           // Signals whether to re-start the current     // 是否重启
                          // program (reset==1) or continue executing
                          // the current program (reset==0).
 
-    OUT outM[16],        // M value output
-        writeM,          // Write to M? 
+    OUT outM[16],        // M value output                              // 输出值
+        writeM,          // Write to M?                                 // 
         addressM[15],    // Address in data memory (of M)
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
-    
+    // 指令的最大地址 如果为1则是C指令, 为0则是A指令
+    Not(in=instruction[15], out=isA);
+    // 对isC再次取反, 判断是否C指令, 读者可以自行运行1或者0带入试下,
+    Not(in=isA, out=isC);
+
+    // A Register
+    // 如果为A指令或者指令输出到A处理器 则将AR的laod位置1
+    And(a=cinst, b=instrution[5], out=computea);
+    Mux16(a=instruction, b=alu, sel=instruction[15], out=newa);
+    Or(a=ainst, b=computea, out=loada);
+    ARegister(in=newa, load=loada, out=a);
+
+    // D Register
+    // 如果C指令并且指令指定ALU输出存到AR 则将ALU的输出 输入到AR 否则将指令输入到AR
+    And(a=instructon[4], b=cinst, out=loadd);
+    DRegister(in=alu, load=loadd, out=d);
+
+    // Alu
+    Mux16(a=a, b=inM, sel=instruction[12], out=aorm);
+    And(a=instruction[11], b=true, out=zx);
+
+    ALU(x=, y=, zx=, nx=, zy=, ny=, f=, no=, out=, zr=, ng=);
 }
