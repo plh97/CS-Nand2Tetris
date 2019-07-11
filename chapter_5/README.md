@@ -92,7 +92,7 @@ Hack 机器语言有两种 16-位命令类型,其中地址指令的格式位 `0v
 
 ### 中央处理器
 
-Hack 平台的 CPu 被设计用来执行 16 位指令,它与两个互相独立的内存模块相互相连:一个是指令内存,CPU 从该内存取指令;另一个是数据内存,CPU 可以对其进行读写数据值.
+Hack 平台的 CPU 被设计用来执行 16 位指令,它与两个互相独立的内存模块相互相连:一个是指令内存,CPU 从该内存取指令;另一个是数据内存,CPU 可以对其进行读写数据值.
 
 ### 指令内存
 
@@ -118,11 +118,55 @@ hack 的**数据内存**的芯片具有典型的 RAM 设备的接口,为了读�
 
 输出点依旧是内存,输入的是内存条中的指令,包括两种
 
-> **`数据内存`**
-> 例如 variable,array,object 等等都是存储在这个区域.以二进制形式进行存储,一旦通过指定的地址,在数据内存中找到对应的内存单元.就可以对内存进行读写操作
+### 数据内存 - 详细
 
-> **`指令内存`**
-> 当高级语言被翻译成机器语言时候,他变成一系列的二进制的字,这些字(word)代表机器语言中的指令,从而计算下一条要执行的指令.
+例如 variable,array,object 等等都是存储在这个区域.以二进制形式进行存储,一旦通过指定的地址,在数据内存中找到对应的内存单元.就可以对内存进行读写操作
+
+### 指令内存 - 详细
+
+当高级语言被翻译成机器语言时候,他变成一系列的二进制的字,这些字(word)代表机器语言中的指令,从而计算下一条要执行的指令.这些地址指令的格式通常如下,他们常常被加载到 A 寄存器中,下面是一个典型的指令内存格式,C 指令内存,当`instruction[15]==0`的时候,是 C-指令,否则是 A-指令
+
+```js
+// 1111 a ccccc ddd jjj
+//
+// i  _  _  a  c1 c2 c3 c4 c5 c6 d1 d2 d3 j1 j2 j3
+// 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
+
+========================== A instruction ==========================
+// @3001
+// [0]000 1011 1011 1001
+//
+// Op  instruction
+// Op code 0 means an instruction
+Not(in=instruction[15], out=notOp);
+Mux16(a=aluOut, b=instruction, sel=notOp, out=entryMuxOut);
+
+Or(a=notOp, b=instruction[5], out=intoA);
+ARegister(in=entryMuxOut, load=intoA, out=A, out[0..14]=addressM)
+========================== A instruction ==========================
+
+========================== C instruction ==========================
+// Op  code is 1, indexes
+// 0 - Op code
+// 1-3 ???
+// 4-9 ALU control bits
+// 10-12 Destination load bits
+// 13-15 Jump bits
+//
+// ALU takes input from DRegister and from ARegister or inM
+And(a=instruction[15], b=instruction[12], out=AMSwitch);
+Mux16(a=A, b=inM, sel=AMSwitch, out=AM);
+
+And(a=instruction[15], b=instruction[4], out=intoD);
+DRegister(in=aluOut, load=intoD, out=D);
+========================== C instruction ==========================
+
+
+```
+
+a-bits 和 c-bits 通常被指定要 ALU 去计算哪个函数
+d-位域通常表示 ALU 输出存于何处
+j-位域指定了可选的跳转条件
 
 而我们则根据 `instruction[15]`来判断它是数据内存还是指令内存.也就是`A-instruction`还是`C-instruction`,从而再次进行判断我们是需要加载数据还是指令
 
@@ -132,26 +176,26 @@ hack 的**数据内存**的芯片具有典型的 RAM 设备的接口,为了读�
 ALU(
   x=?,
   y=?,
-  zx=instruction[11],
-  nx=instruction[10],
-  zy=instruction[9],
-  ny=instruction[8],
-  f=instruction[7],
-  no=instruction[6],
+  zx=instruction[11],   // alu control bit
+  nx=instruction[10],   // alu control bit
+  zy=instruction[9],    // alu control bit
+  ny=instruction[8],    // alu control bit
+  f=instruction[7],     // alu control bit
+  no=instruction[6],    // alu control bit
   out=alu,              // 输出alu啦
   zr=zr,                // 输出zr啦啦
   ng=ng                 // 输出ng啦啦
 );
 ```
 
-> ### DRegister - data register - 数据寄存器
->
-> 比如在做`(a-b)c`的时候,我们需要先暂存`a-b`的值,这个值就是被暂存到数据内存中,然后用来和 c 相乘
+### DRegister - data register - 数据寄存器
 
-> ### ARegister - address Register - 寻址寄存器
->
-> 读写的时候 CPU 需要连续访问内存中的数据,我们必须要先确定被访问的内存的字所在的内存地址,这个地址有时候是当前指令给出,但有时候这个地址依赖于前面一个指令执行的结果,比如`arr[1+2]`,相当于`arr[3]`,因为去内存中去拿这个地址开销很大,所以在寄存器中先暂存`1+2`的输出结果的值.再去拿`arr[3]`地址的值,差不多这个意思吧,虽然很可能底层不是这么实现的.
+比如在做`(a-b)c`的时候,我们需要先暂存`a-b`的值,这个值就是被暂存到数据内存中,然后用来和 c 相乘
 
-> ### PC - Program counter register - 程序计数器内存
->
-> 执行计算的时候,CPU 必须直到下一条要执行的指令的内存地址,这个地址保存在一个特殊的地方,我们称之为 PC,早在冯诺依曼结构体系中,就提到过,计算机的本质就是: 按照顺序执行内存中的指令的一个程序, 我们将程序和数据同等的看做二进制字节 存在内存中.而 CPU 负责计算.不断顺序执行所接受到的指令,当然 遇到 GOTO 指令的时候,同时需要判断是否需要跳转咯.
+### ARegister - address Register - 寻址寄存器
+
+读写的时候 CPU 需要连续访问内存中的数据,我们必须要先确定被访问的内存的字所在的内存地址,这个地址有时候是当前指令给出,但有时候这个地址依赖于前面一个指令执行的结果,比如`arr[1+2]`,相当于`arr[3]`,因为去内存中去拿这个地址开销很大,所以在寄存器中先暂存`1+2`的输出结果的值.再去拿`arr[3]`地址的值,差不多这个意思吧,虽然很可能底层不是这么实现的.
+
+### PC - Program counter register - 程序计数器内存
+
+执行计算的时候,CPU 必须直到下一条要执行的指令的内存地址,这个地址保存在一个特殊的地方,我们称之为 PC,早在冯诺依曼结构体系中,就提到过,计算机的本质就是: 按照顺序执行内存中的指令的一个程序, 我们将程序和数据同等的看做二进制字节 存在内存中.而 CPU 负责计算.不断顺序执行所接受到的指令,当然 遇到 GOTO 指令的时候,同时需要判断是否需要跳转咯.

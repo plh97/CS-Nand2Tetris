@@ -55,10 +55,17 @@ CHIP CPU {
     // 如果C指令并且指令指定ALU输出存到AR 则将ALU的输出 输入到AR 否则将指令输入到AR
     And(a=instructon[4], b=cinst, out=loadd);
     DRegister(in=alu, load=loadd, out=d);
-
+    
+    // 1111 a ccccc ddd jjj
+    //        
     // Alu
     Mux16(a=a, b=inM, sel=instruction[12], out=aorm);
     And(a=instruction[11], b=true, out=zx);
+    And(a=instruction[10], b=true, out=nx);
+    And(a=instruction[9], b=true, out=zy);
+    And(a=instruction[8], b=true, out=ny);
+    And(a=instruction[7], b=true, out=f);
+    And(a=instruction[6], b=true, out=no);
 
-    ALU(x=, y=, zx=, nx=, zy=, ny=, f=, no=, out=, zr=, ng=);
+    ALU(x=d, y=aorm, zx=zx, nx=nx, zy=zy, ny=ny, f=f, no=no, out=alu, zr=zr, ng=ng);
 }
