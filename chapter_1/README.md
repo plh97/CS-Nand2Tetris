@@ -219,6 +219,45 @@ sel==111 => h
 
 和 Mux8Way 实现思路差不多
 
+### Boolean Function
+
+#### Formula
+
+f(x,y,z) = (x AND y) OR (NOT(x) AND z)
+
+#### Truth Table
+
+|  x  |  y  |  z  |  f  |
+| :-: | :-: | :-: | :-: |
+|  0  |  0  |  1  |  0  |
+|  0  |  1  |  0  |  1  |
+|  0  |  1  |  1  |  0  |
+|  1  |  0  |  0  |  1  |
+|  1  |  0  |  1  |  0  |
+|  1  |  0  |  0  |  0  |
+|  1  |  1  |  1  |  1  |
+|  1  |  1  |  0  |  1  |
+
+#### Commutative Laws 交换定律
+
+- (x AND y) = (y AND x)
+- (x OR y) = (y OR x)
+
+#### Associative Laws 结合定律
+
+- (x AND (y AND z)) = ((x AND y) AND z)
+- (x OR (y OR z)) = ((x OR y) OR z)
+
+#### Distributive Laws 分配定律
+
+- (x AND (y OR z)) = (x AND y) OR (x AND z)
+- (x OR (y AND z)) = (x OR y) AND (x OR z)
+
+#### De Morgan Laws 摩根定律
+
+- NOT(x AND y) = NOT(x) OR NOT(y)
+- NOT(x OR y) = NOT(x) AND NOT(y)
+
 ## Reference
 
 [计算机系统要素的笔记](https://www.jianshu.com/p/a929e23192fc)

@@ -39,33 +39,22 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // 指令的最大地址 如果为1则是C指令, 为0则是A指令
-    Not(in=instruction[15], out=isA);
-    // 对isC再次取反, 判断是否C指令, 读者可以自行运行1或者0带入试下,
-    Not(in=isA, out=isC);
+        // @12345   A instruction     0011 0000 0011 1001   ok
+        // D=A      C instruction     1110 1100 0001 0000   ok
 
-    // A Register
-    // 如果为A指令或者指令输出到A处理器 则将AR的laod位置1
-    And(a=cinst, b=instrution[5], out=computea);
-    Mux16(a=instruction, b=alu, sel=instruction[15], out=newa);
-    Or(a=ainst, b=computea, out=loada);
-    ARegister(in=newa, load=loada, out=a);
 
-    // D Register
-    // 如果C指令并且指令指定ALU输出存到AR 则将ALU的输出 输入到AR 否则将指令输入到AR
-    And(a=instructon[4], b=cinst, out=loadd);
-    DRegister(in=alu, load=loadd, out=d);
-    
-    // 1111 a ccccc ddd jjj
-    //        
-    // Alu
-    Mux16(a=a, b=inM, sel=instruction[12], out=aorm);
-    And(a=instruction[11], b=true, out=zx);
-    And(a=instruction[10], b=true, out=nx);
-    And(a=instruction[9], b=true, out=zy);
-    And(a=instruction[8], b=true, out=ny);
-    And(a=instruction[7], b=true, out=f);
-    And(a=instruction[6], b=true, out=no);
+        // isA
+        Not(in=instruction[15], out=isA);
+        // isC
+        Not(in=isA, out=isC);
 
-    ALU(x=d, y=aorm, zx=zx, nx=nx, zy=zy, ny=ny, f=f, no=no, out=alu, zr=zr, ng=ng);
+        // 数据寄存器
+        DRegister(in=ainst, load=isC, out=false);
+        // 指令寄存器
+        ARegister(in=instruction, load=isA, out[0..14]=addressM, out=ainst);
+
+        ALU(x=, y=, zx=, nx=, zy=, ny=, f=, no=, out=, zr=, ng=);
+
+        // 地址寄存器
+        PC(in=false, load=false, inc=true, reset=false, out[0..14]=pc);
 }
