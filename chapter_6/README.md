@@ -18,4 +18,4 @@ D=A
 1110 xxxx xx00 0000 // c指令
 ```
 
-[汇编编译器跳转链接]('../projects/06/assembler)
+[汇编编译器跳转链接](../projects/06/assembler)
