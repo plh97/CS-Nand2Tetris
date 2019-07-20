@@ -17,3 +17,5 @@ D=A
 0000 0010 0000 0000 // a指令 instruction[14] => 1024
 1110 xxxx xx00 0000 // c指令
 ```
+
+[汇编编译器跳转链接]('./projects/06/assembler)
