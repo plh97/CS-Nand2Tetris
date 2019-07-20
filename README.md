@@ -79,7 +79,7 @@
 
 ### ALU 逻辑计算单元
 
-```dhl
+```vdhl
 CHIP ALU {
     IN
         x[16], y[16],  // 16-bit inputs
