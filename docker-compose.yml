@@ -1,9 +1,0 @@
-version: '3.7'
-
-services:
-  chat:
-    image: ctypes
-    ports:
-      - 80:80
-    volumes:
-      - ./:/root/app
