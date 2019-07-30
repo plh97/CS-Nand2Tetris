@@ -20,6 +20,6 @@ for (var pc = 0; pc < lines.length; pc++) {
     if (C_TYPE === "C_ARITHMETIC") {
         newLine = codewriter.writeArithmetic(line);
     }
-    newFile += newLine.trim().replace(/ /g, "") + "\r\n";
+    newFile += newLine;
 }
 fs.writeFileSync(fileName + ".asm", newFile);

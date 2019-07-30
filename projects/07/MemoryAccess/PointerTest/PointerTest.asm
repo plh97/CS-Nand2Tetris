@@ -1,103 +1,138 @@
+@3030
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@SP
+A=M-1
+D=M
+@THIS
+M=D
+@SP
+M=M-1
+@3040
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@SP
+A=M-1
+D=M
+@THAT
+M=D
+@SP
+M=M-1
+@32
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@SP
+A=M-1
+D=M
+@THIS
+A=M
+A=A+1
+A=A+1
 
-          @3030
-          D=A
-          @SP
-          A=M
-          M=D
-          @SP
-          M=M+1
-        
+M=D
+@SP
+M=M-1
+@46
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@SP
+A=M-1
+D=M
+@THAT
+A=M
+A=A+1
+A=A+1
+A=A+1
+A=A+1
+A=A+1
+A=A+1
 
+M=D
+@SP
+M=M-1
+@THIS
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@THAT
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+M=M+D
+@SP
+M=M+1
+@THIS
+A=M
+A=A+1
+A=A+1
 
-          @3040
-          D=A
-          @SP
-          A=M
-          M=D
-          @SP
-          M=M+1
-        
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+M=M-D
+@SP
+M=M+1
+@THAT
+A=M
+A=A+1
+A=A+1
+A=A+1
+A=A+1
+A=A+1
+A=A+1
 
-
-          @32
-          D=A
-          @SP
-          A=M
-          M=D
-          @SP
-          M=M+1
-        
-
-          @SP
-          A=M-1
-          D=A
-          @THIS
-          A=A+2
-          M=D
-        
-
-          @46
-          D=A
-          @SP
-          A=M
-          M=D
-          @SP
-          M=M+1
-        
-
-          @SP
-          A=M-1
-          D=A
-          @THAT
-          A=A+6
-          M=D
-        
-
-
-
-        @SP
-        A=M-1
-        D=M
-        @SP
-        M=M-1
-        A=M-1
-        M=D+M
-      
-
-          @THIS
-          A=A+2
-          D=M
-          @SP
-          A=M
-          M=D
-          @SP
-          M=M+1
-        
-
-        @SP
-        A=M-1
-        D=M
-        @SP
-        M=M-1
-        A=M-1
-        M=D-M
-      
-
-          @THAT
-          A=A+6
-          D=M
-          @SP
-          A=M
-          M=D
-          @SP
-          M=M+1
-        
-
-        @SP
-        A=M-1
-        D=M
-        @SP
-        M=M-1
-        A=M-1
-        M=D+M
-      
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+M=M+D
+@SP
+M=M+1

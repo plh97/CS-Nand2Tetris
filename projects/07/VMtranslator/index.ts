@@ -18,15 +18,15 @@ for (let pc = 0; pc < lines.length; pc++) {
 
   if (C_TYPE === "C_PUSH" || C_TYPE === "C_POP") {
     newLine = codewriter.writePushPop(
-        C_TYPE,
-        line.split(" ")[1] as any,
-        Number(line.split(" ")[2])
-      );
+      C_TYPE,
+      line.split(" ")[1] as any,
+      Number(line.split(" ")[2])
+    );
   }
   if (C_TYPE === "C_ARITHMETIC") {
     newLine = codewriter.writeArithmetic(line as any);
   }
-  newFile += newLine.trim().replace(/ /g, "") + "\r\n";
+  newFile += newLine
 }
 
 fs.writeFileSync(`${fileName}.asm`, newFile);

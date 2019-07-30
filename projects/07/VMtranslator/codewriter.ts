@@ -14,15 +14,22 @@ const Map = {
     local: "LCL",
     argument: "ARG",
     this: "THIS",
-    that: "THAT"
+    that: "THAT",
+    pointer0: "THIS",
+    pointer1: "THAT",
+    temp0: "5",
+    temp1: "6",
+    temp2: "7",
+    temp3: "8",
+    temp4: "9",
+    temp5: "10",
+    temp6: "11",
+    temp7: "12",
+    static: "16"
   }
 };
 
 export default class CodeWriter {
-  setFileName(filename: string): void {
-    // 通知代码写入程序.,新的VM文件翻译过程已经开始
-  }
-
   writeArithmetic(
     command: "add" | "sub" | "or" | "and" | "neg" | "not" | "eq" | "lt" | "gt"
   ): string {
@@ -35,12 +42,15 @@ export default class CodeWriter {
     ) {
       return `
         @SP
-        A=M-1
+        M=M-1
+        A=M
         D=M
         @SP
         M=M-1
-        A=M-1
-        M=D${Map.opera[command]}M
+        A=M
+        M=M${Map.opera[command]}D
+        @SP
+        M=M+1
       `;
     }
     if (command === "neg" || command === "not") {
@@ -51,7 +61,7 @@ export default class CodeWriter {
       `;
     }
     if (command === "eq" || command === "lt" || command === "gt") {
-      const ramdomNumner = (Math.random() as any).toFixed(3) * 1000;
+      const rn = (Math.random() as any).toFixed(3) * 1000;
       return `
         @SP
         A=M-1
@@ -59,19 +69,22 @@ export default class CodeWriter {
         @SP
         M=M-1
         A=M-1
-        D=D+M
-        @SET_TRUE.${ramdomNumner}
+        D=M-D
+        @GOTO_TRUE${rn}
         D;J${command.toUpperCase()}
-        @SET_FALSE.${ramdomNumner}
+        @GOTO_FALSE${rn}
         0;JMP
-      (SET_TRUE.${ramdomNumner})
+        (GOTO_TRUE${rn})
         @SP
         A=M-1
-        M=1
-      (SET_FALSE.${ramdomNumner})
+        M=-1
+        @OUT${rn}
+        0;JMP
+        (GOTO_FALSE${rn})
         @SP
         A=M-1
         M=0
+        (OUT${rn})
       `;
     }
   }
@@ -85,10 +98,12 @@ export default class CodeWriter {
       | "static"
       | "this"
       | "that"
+      | "pointer"
       | "point"
       | "temp",
     index: number
   ): string {
+    // 将给定的Command 命令类型为C_PUSH , C_POP, 所对应的汇编代码写入至输出
     if (Command === "C_PUSH") {
       if (segment === "constant") {
         // 将 index 压入栈中 256-2047
@@ -108,9 +123,39 @@ export default class CodeWriter {
         segment === "local" ||
         segment === "argument"
       ) {
+        // push
+        let loopString: string = "";
+        for (; index > 0; index--) {
+          loopString += `A=A+1\n`;
+        }
         return `
           @${Map.segment[segment]}
-          A=A+${index}
+          A=M
+          ${loopString}
+          D=M
+          @SP
+          A=M
+          M=D
+          @SP
+          M=M+1
+        `;
+      }
+      if (segment === "temp" || segment === "pointer") {
+        // push , 去temp_index 中拿到对应的值然后push到堆栈中
+        return `
+          @${Map.segment[segment + index]}
+          D=M
+          @SP
+          A=M
+          M=D
+          @SP
+          M=M+1
+        `;
+      }
+      if (segment === "static") {
+        // push 从16 开始, 去拿static 的数据
+        return `
+          @${Number(Map.segment.static) + Number(index)}
           D=M
           @SP
           A=M
@@ -121,6 +166,18 @@ export default class CodeWriter {
       }
     }
     if (Command === "C_POP") {
+      if (segment === "temp" || segment === "pointer") {
+        // pop
+        return `
+          @SP
+          A=M-1
+          D=M
+          @${Map.segment[segment + index]}
+          M=D
+          @SP
+          M=M-1
+        `;
+      }
       if (
         segment === "local" ||
         segment === "argument" ||
@@ -128,23 +185,34 @@ export default class CodeWriter {
         segment === "that"
       ) {
         // 将 栈顶推出到local.0中
+        let loopString: string = "";
+        for (; index > 0; index--) {
+          loopString += `A=A+1\n`;
+        }
         return `
           @SP
           A=M-1
-          D=A
+          D=M
           @${Map.segment[segment]}
-          A=A+${index}
+          A=M
+          ${loopString}
           M=D
+          @SP
+          M=M-1
+        `;
+      }
+      if (segment === "static") {
+        // pop -- 从16 开始, 将当前栈顶数据push到static
+        return `
+          @SP
+          A=M-1
+          D=M
+          @${Number(Map.segment.static) + Number(index)}
+          M=D
+          @SP
+          M=M-1
         `;
       }
     }
-    console.log(Command, segment, index);
-    return "";
-
-    // 将给定的Command 命令类型为C_PUSH , C_POP, 所对应的汇编代码写入至输出
-  }
-
-  close() {
-    // 关闭输出文件
   }
 }
