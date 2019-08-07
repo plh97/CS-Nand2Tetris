@@ -1,0 +1,30 @@
+{
+  "name": "cs-nand2tetris",
+  "version": "1.0.0",
+  "description": "计算机系统要素-从零开始构建现代计算机 项目",
+  "main": "index.js",
+  "dependencies": {
+    "@types/node": "^12.6.9"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "8": "nodemon ./projects/08/VMtranslator",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pengliheng/CS-Nand2Tetris.git"
+  },
+  "keywords": [
+    "nand2tetris",
+    "self-contained",
+    "coursera",
+    "course"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pengliheng/CS-Nand2Tetris/issues"
+  },
+  "homepage": "https://github.com/pengliheng/CS-Nand2Tetris#readme"
+}
