@@ -6,6 +6,10 @@ exports.__esModule = true;
 var code_1 = require("./code");
 var symbolTable_1 = require("./symbolTable");
 var varityIndex = 16;
+// i  _  _  a  c1 c2 c3 c4 c5 c6 d1 d2 d3 j1 j2 j3
+// 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
+// c => command
+// dest=comp;jump
 var Parser = /** @class */ (function () {
     function Parser() {
     }
@@ -15,10 +19,11 @@ var Parser = /** @class */ (function () {
     };
     // 当前命令 返回机器码
     Parser.advance = function (line) {
+        var _a;
         var type = this.commandType(line);
         // @xxx 是符号, 或者 十进制数字
         if (type === "A_COMMAND") {
-            line = line.replace(/@/, '');
+            line = line.replace(/@/, "");
             if (isNaN(Number(line)) && !symbolTable_1["default"].contains(line)) {
                 // 如果是符号表不包含的字符, 则,他就是变量
                 symbolTable_1["default"].addEntry(line, varityIndex);
@@ -27,18 +32,29 @@ var Parser = /** @class */ (function () {
             return this.symbol(line);
         }
         if (type === "C_COMMAND") {
-            var dest = line;
-            var comp = "";
+            var dest = "0";
+            var comp = line;
             var jump = "0";
-            if (line.match(/;/)) {
-                jump = line.split(";")[1];
-                dest = line.split(";")[0];
-            }
             if (line.match(/=/)) {
-                comp = line.split("=")[1];
                 dest = line.split("=")[0];
+                comp = line.split("=")[1];
             }
+            if (line.match(/;/)) {
+                _a = comp.split(";"), comp = _a[0], jump = _a[1];
+            }
+            // console.log(line);
+            // console.log(dest, "=", comp, ";", jump);
+            // console.log(`111${this.comp(comp)}${this.dest(dest)}${this.jump(jump)}`);
+            // console.log("===========");
             return "111" + this.comp(comp) + this.dest(dest) + this.jump(jump);
+            // console.log(
+            //   line,
+            //   111,
+            //   comp,
+            //   111,
+            //   `111${this.comp(comp)}000${this.jump(jump)}`
+            // );
+            // return `111${this.comp(comp)}000${this.jump(jump)}`;
         }
     };
     // ============== 命令类型 ===============

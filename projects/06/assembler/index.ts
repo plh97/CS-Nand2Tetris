@@ -11,8 +11,6 @@ let lines = data.split("\n");
 
 lines = lines.map(line => parser.clear(line)).filter(e=>e);
 
-let pc = 0;
-
 // 第一轮预处理
 // 该阶段主要是在符号表中简历每条命令以及其对应的地址,逐行处理整个汇编程序
 // 构建符号表,每一行得用数字记录ROM地址,当命令最终被加载到地址中,这个数字从0开始
@@ -38,5 +36,3 @@ lines.forEach((line) => {
   line && (newFile += line + "\r\n");
 });
 fs.writeFileSync(`${fileName}.hack`, newFile);
-
-console.log(newFile);

@@ -7,10 +7,15 @@ import symbolTable from "./symbolTable";
 
 let varityIndex = 16;
 
+// i  _  _  a  c1 c2 c3 c4 c5 c6 d1 d2 d3 j1 j2 j3
+// 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
+// c => command
+// dest=comp;jump
+
 export default class Parser {
   // 清除多余命令
-  static clear(line: string){
-    return line.replace(/\/\/[\s\S]+/, "").trim();   // 清空注释后面的文字
+  static clear(line: string) {
+    return line.replace(/\/\/[\s\S]+/, "").trim(); // 清空注释后面的文字
   }
 
   // 当前命令 返回机器码
@@ -19,8 +24,8 @@ export default class Parser {
 
     // @xxx 是符号, 或者 十进制数字
     if (type === "A_COMMAND") {
-      line = line.replace(/@/,'')
-      if (isNaN(Number(line)) && !symbolTable.contains(line)){
+      line = line.replace(/@/, "");
+      if (isNaN(Number(line)) && !symbolTable.contains(line)) {
         // 如果是符号表不包含的字符, 则,他就是变量
         symbolTable.addEntry(line, varityIndex);
         varityIndex++;
@@ -28,21 +33,32 @@ export default class Parser {
       return this.symbol(line);
     }
     if (type === "C_COMMAND") {
-      let dest = line;
-      let comp = "";
+      let dest = "0";
+      let comp = line;
       let jump = "0";
-      if (line.match(/;/)) {
-        jump = line.split(";")[1];
-        dest = line.split(";")[0];
-      }
       if (line.match(/=/)) {
-        comp = line.split("=")[1];
         dest = line.split("=")[0];
+        comp = line.split("=")[1];
       }
+      if (line.match(/;/)) {
+        [comp, jump] = comp.split(";");
+      }
+      // console.log(line);
+      // console.log(dest, "=", comp, ";", jump);
+      // console.log(`111${this.comp(comp)}${this.dest(dest)}${this.jump(jump)}`);
+      // console.log("===========");
       return `111${this.comp(comp)}${this.dest(dest)}${this.jump(jump)}`;
+      // console.log(
+      //   line,
+      //   111,
+      //   comp,
+      //   111,
+      //   `111${this.comp(comp)}000${this.jump(jump)}`
+      // );
+      // return `111${this.comp(comp)}000${this.jump(jump)}`;
     }
   }
-  
+
   // ============== 命令类型 ===============
   static commandType(line: string): "A_COMMAND" | "L_COMMAND" | "C_COMMAND" {
     if (/@/.test(line)) {
@@ -61,7 +77,7 @@ export default class Parser {
   // ============== 命令类型 ===============
   // A,L 命令时候调用
   static symbol(line: string): string {
-    return symbolTable.getAddress(line)
+    return symbolTable.getAddress(line);
   }
 
   // C 命令调用
