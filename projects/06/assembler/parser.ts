@@ -43,19 +43,7 @@ export default class Parser {
       if (line.match(/;/)) {
         [comp, jump] = comp.split(";");
       }
-      // console.log(line);
-      // console.log(dest, "=", comp, ";", jump);
-      // console.log(`111${this.comp(comp)}${this.dest(dest)}${this.jump(jump)}`);
-      // console.log("===========");
       return `111${this.comp(comp)}${this.dest(dest)}${this.jump(jump)}`;
-      // console.log(
-      //   line,
-      //   111,
-      //   comp,
-      //   111,
-      //   `111${this.comp(comp)}000${this.jump(jump)}`
-      // );
-      // return `111${this.comp(comp)}000${this.jump(jump)}`;
     }
   }
 

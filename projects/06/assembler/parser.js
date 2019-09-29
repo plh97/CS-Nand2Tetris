@@ -42,19 +42,7 @@ var Parser = /** @class */ (function () {
             if (line.match(/;/)) {
                 _a = comp.split(";"), comp = _a[0], jump = _a[1];
             }
-            // console.log(line);
-            // console.log(dest, "=", comp, ";", jump);
-            // console.log(`111${this.comp(comp)}${this.dest(dest)}${this.jump(jump)}`);
-            // console.log("===========");
             return "111" + this.comp(comp) + this.dest(dest) + this.jump(jump);
-            // console.log(
-            //   line,
-            //   111,
-            //   comp,
-            //   111,
-            //   `111${this.comp(comp)}000${this.jump(jump)}`
-            // );
-            // return `111${this.comp(comp)}000${this.jump(jump)}`;
         }
     };
     // ============== 命令类型 ===============
