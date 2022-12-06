@@ -9,45 +9,49 @@
 // program clears the screen, i.e. writes "white" in every pixel.
 
 // Put your code here.
-@i
-M=0
 
-(loop)
+(EXIT)
+
+@SCREEN
+D=A
+@18 // store screen address
+M=D
+@8192
+M=A // store times
+
+(LOOP)
+@8192
+D=M
+M=M-1 // time - 1
+
+
 @KBD
 D=M
 @black
-D;JNE
-@white
-D;JMP
-
-(black)
-@i
-D=M
-@8192
-D=D-A
-@loop
-D;JEQ
-@i
-D=M
-@SCREEN
-A=A+D
-M=-1
-@i
-M=M+1
-@loop
-0;JMP
+D;JGT
 
 (white)
-@i
+@8192
 D=M
-@loop
+@EXIT
 D;JLT
-@i
-D=M
-@SCREEN
-A=A+D
+@18
+A=M
 M=0
-@i
-M=M-1
-@loop
+@18
+M=M+1 // screen address + 1
+@LOOP
+0;JMP
+
+(black)
+@8192
+D=M
+@EXIT
+D;JLT
+@18
+A=M
+M=-1
+@18
+M=M+1 // screen address + 1
+@LOOP
 0;JMP

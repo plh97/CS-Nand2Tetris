@@ -202,4 +202,4 @@ ALU(
 
 ### 最后
 
-搞了 1️⃣ 个月了也没搞定`CPU.hdl`.但是呢, 我真的太想成功的从 nand 到制作一个 3D 游戏, Ping-Pong 游戏了.为了能搞定`CPU.hdl`,我可以放弃一些其他东西,来换取一些便利.或许应该先做`Memory.hdl`和`Computer.hdl`,再搞`CPU.hdl`.好吧,我应该先搞这个,再搞这个,再搞这个,最后搞这个,understand?
+搞了 1️⃣ 个月了也没搞定`CPU.hdl`. 但是呢, 我真的太想成功的从 nand 到制作一个 3D 游戏, Ping-Pong 游戏了. 为了能搞定`CPU.hdl`, 我可以放弃一些其他东西, 来换取一些便利. 或许应该先做`Memory.hdl`和`Computer.hdl`, 再搞`CPU.hdl`. 好吧,我应该先搞这个,再搞这个, 再搞这个, 最后搞这个, understand?
